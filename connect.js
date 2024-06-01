@@ -1,7 +1,9 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
+import { config } from "dotenv";
+config();
 
 // Replace the placeholder with your Atlas connection string
-const uri = "<connection string>";
+const uri = process.env.DATABASE_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri,  {
@@ -21,6 +23,15 @@ async function run() {
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+    const result = await client.db("sample_mflix").collection('comments').find({
+        name: "John Bishop"
+    });
+
+    for await (const doc of result) {
+        console.log(doc);
+    }
+
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
